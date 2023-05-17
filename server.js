@@ -15,33 +15,38 @@ mongoose.connect('mongodb+srv://priyanshumandil:Heisenberg%40123@cluster1.ho9mn2
 // Serve static files (index.html and client-side scripts)
 app.use(express.static('public'));
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
 // API endpoint for product search
-app.get('/products', async (req, res) => {
+app.get('/products', async (req, res, next) => {
   const { search } = req.query;
 
   const query = {
     $or: [
-      { tags: { $in: [search] } },
-      { category: search },
-      { type: search },
+      { tags: { $regex: new RegExp(search, 'i') } },
+      { category: { $regex: new RegExp(search, 'i') } },
+      { type: { $regex: new RegExp(search, 'i') } },
     ],
   };
 
-  // Handle price search separately
-  if (!isNaN(search)) {
+  const numericRegex = /^[0-9]+$/;
+  if (numericRegex.test(search)) {
     query.$or.push({ price: parseInt(search) });
   }
 
   try {
     const startTime = performance.now();
-    const products = await Product.find(query);
+    const products = await Product.find(query).select('name price category type').limit(50).lean();
     const endTime = performance.now();
     const responseTime = endTime - startTime;
 
     res.json({ products, responseTime });
   } catch (error) {
-    console.error('Error retrieving products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error); // Pass the error to the error handling middleware
   }
 });
 

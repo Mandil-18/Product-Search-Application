@@ -1,49 +1,72 @@
+// index.js
+
+let currentPage = 1;
+const pageSize = 10;
+
 function searchProducts() {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput.value.trim();
-    const url = `/products?search=${query}`;
+  const searchInput = document.getElementById('searchInput').value;
+  currentPage = 1; // Reset to the first page when performing a new search
+  fetchProducts(searchInput);
+}
 
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        displayResults(data.products, data.responseTime);
-      })
-      .catch(error => console.error('Error fetching products:', error));
+function prevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    const searchInput = document.getElementById('searchInput').value;
+    fetchProducts(searchInput);
   }
+}
 
-  function displayResults(products, responseTime) {
-    const resultsList = document.getElementById('resultsList');
-    resultsList.innerHTML = '';
-
-    const responseTimeDiv = document.getElementById('responseTime');
-    responseTimeDiv.textContent = `Response Time: ${responseTime.toFixed(2)} ms`;
-
-    if (products.length === 0) {
-      const li = document.createElement('li');
-      li.textContent = 'No products found.';
-      resultsList.appendChild(li);
-      return;
-    }
-
-    products.forEach(product => {
-  const li = document.createElement('li');
-  const category = document.createElement('span');
-  category.textContent = `Category: ${product.category}`;
-  const price = document.createElement('span');
-  price.textContent = `Price: $${product.price}`;
-  const type = document.createElement('span');
-  type.textContent = `Type: ${product.type}`;
-  const name = document.createElement('span');
-  name.textContent = `Name: ${product.name}`;
-
-  li.appendChild(name);
-  li.appendChild(document.createElement('br'));
-  li.appendChild(price);
-  li.appendChild(document.createElement('br'));
-  li.appendChild(category);
-  li.appendChild(document.createElement('br'));
-  li.appendChild(type);
-
-  resultsList.appendChild(li);
+function nextPage() {
+  currentPage++;
+  const searchInput = document.getElementById('searchInput').value;
+  fetchProducts(searchInput);
+}
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('keypress', function(event) {
+  if (event.key === 'Enter') {
+    searchProducts();
+  }
 });
+
+async function fetchProducts(searchInput) {
+  const responseTime = document.getElementById('responseTime');
+  const resultsList = document.getElementById('resultsList');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  responseTime.textContent = 'Loading...';
+  resultsList.innerHTML = '';
+
+  try {
+    const startTime = performance.now();
+    const response = await fetch(`/products?search=${searchInput}&page=${currentPage}&pageSize=${pageSize}`);
+    const data = await response.json();
+    const endTime = performance.now();
+    const responseTimeValue = endTime - startTime;
+
+    responseTime.textContent = `Response Time: ${responseTimeValue.toFixed(2)}ms`;
+
+    if (response.ok) {
+      const { products, totalPages } = data;
+      products.forEach(product => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+          <p><strong>Name:</strong> ${product.name}</p>
+          <p><strong>Price:</strong> ${product.price}</p>
+          <p><strong>Category:</strong> ${product.category}</p>
+          <p><strong>Tyoe:</strong> ${product.type}</p>
+        `;
+        resultsList.appendChild(listItem);
+      });
+
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (error) {
+    console.error('Error retrieving products:', error);
+    responseTime.textContent = 'An error occurred.';
   }
+}
