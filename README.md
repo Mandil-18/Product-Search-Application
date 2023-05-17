@@ -18,6 +18,8 @@ It provides fast response times and supports efficient querying of a database co
 - HTML
 - CSS
 
-![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/f21a7056-fc54-4a1a-b6f8-0e4d27f3c432)
-![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/ea32ca31-3e47-4b0c-883c-5ecf4ac9689f)
-![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/ce8c1903-e832-4756-9476-00fcc848b60d)
+![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/02e5d33d-bc84-4263-bbcb-300995a784c8)
+![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/76b6899e-c7a6-4664-86db-13741e59a7b0)
+![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/de457b2a-026f-4ba5-8b35-af5cb80f7a93)
+![image](https://github.com/Mandil-18/Product-Search-Application/assets/88775131/756c5d03-8f51-4486-ae47-be3d89c8cfdd)
+
