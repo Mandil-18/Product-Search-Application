@@ -55,7 +55,7 @@ async function fetchProducts(searchInput) {
           <p><strong>Name:</strong> ${product.name}</p>
           <p><strong>Price:</strong> ${product.price}</p>
           <p><strong>Category:</strong> ${product.category}</p>
-          <p><strong>Tyoe:</strong> ${product.type}</p>
+          <p><strong>Type:</strong> ${product.type}</p>
         `;
         resultsList.appendChild(listItem);
       });
